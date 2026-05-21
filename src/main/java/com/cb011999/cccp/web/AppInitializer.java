@@ -6,6 +6,15 @@ import com.cb011999.cccp.observer.ConsoleStockObserver;
 import com.cb011999.cccp.observer.EmailStockObserver;
 import com.cb011999.cccp.repository.*;
 import com.cb011999.cccp.service.*;
+import com.cb011999.cccp.service.concurrency.SynchronizedInventoryService;
+import com.cb011999.cccp.service.concurrency.SynchronizedPointOfSaleService;
+import com.cb011999.cccp.service.concurrency.SynchronizedReportService;
+import com.cb011999.cccp.service.concurrency.SynchronizedUserService;
+import com.cb011999.cccp.service.impl.InventoryServiceImpl;
+import com.cb011999.cccp.service.impl.PointOfSaleServiceImpl;
+import com.cb011999.cccp.service.impl.ReportServiceImpl;
+import com.cb011999.cccp.service.impl.UserServiceImpl;
+import com.cb011999.cccp.web.concurrency.RequestQueue;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
@@ -28,12 +37,20 @@ public class AppInitializer implements ServletContextListener {
         BillRepository billRepo = RepositoryFactory.createBillRepository();
         InventoryRepository inventoryRepo = RepositoryFactory.createInventoryRepository();
         UserRepository userRepo = RepositoryFactory.createUserRepository();
+        
+        // Initialize request queue
+        RequestQueue.getInstance();
 
-        // Create services
-        InventoryService inventoryService = new InventoryService(inventoryRepo);
-        PointOfSaleService posService = new PointOfSaleService(itemRepo, billRepo, inventoryService);
-        ReportService reportService = new ReportService(billRepo, itemRepo, inventoryService);
-        UserService userService = new UserService(userRepo);
+        // Create base implementations
+        InventoryServiceImpl inventoryImpl = new InventoryServiceImpl(inventoryRepo);
+        PointOfSaleServiceImpl posImpl = new PointOfSaleServiceImpl(itemRepo, billRepo, inventoryImpl);
+        ReportServiceImpl reportImpl = new ReportServiceImpl(billRepo, itemRepo, inventoryImpl);
+        UserServiceImpl userImpl = new UserServiceImpl(userRepo);
+        
+        InventoryService inventoryService = new SynchronizedInventoryService(inventoryImpl);
+        PointOfSaleService posService = new SynchronizedPointOfSaleService(posImpl);
+        ReportService reportService = new SynchronizedReportService(reportImpl);
+        UserService userService = new SynchronizedUserService(userImpl);
 
         // Attach observers
         inventoryService.getStockSubject().attach(new ConsoleStockObserver());
