@@ -39,6 +39,31 @@ public class SynchronizedUserService implements UserService {
         }
         return (RegistrationResult) holder[0].getResult();
     }
+    
+    @Override
+    public RegistrationResult registerEmployee(String name, String contact,
+                                                String employeeNumber, String role, String password) {
+        final Task[] holder = new Task[1];
+        holder[0] = new Task(() -> {
+            synchronized (userLock) {
+                RegistrationResult result = delegate.registerEmployee(name, contact, employeeNumber, role, password);
+                holder[0].setResult(result);
+            }
+        });
+        requestQueue.submitTask(holder[0]);
+
+        if (holder[0].hasError()) {
+            return new RegistrationResult(false, "Server error: " + holder[0].getError(), null);
+        }
+        return (RegistrationResult) holder[0].getResult();
+    }
+
+    @Override
+    public EmployeeLoginResult loginEmployee(String employeeNumber, String password) {
+        synchronized (userLock) {
+            return delegate.loginEmployee(employeeNumber, password);
+        }
+    }
 
 
     @Override

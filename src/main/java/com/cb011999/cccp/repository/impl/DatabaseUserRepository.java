@@ -130,14 +130,15 @@ public class DatabaseUserRepository implements UserRepository {
     }
     
     private void saveEmployee(Employee employee) {
-        String sql = "INSERT INTO users (id, name, contact_number, user_type, " +
-                    "employee_number, role) " +
-                    "VALUES (?, ?, ?, 'EMPLOYEE', ?, ?) " +
-                    "ON DUPLICATE KEY UPDATE " +
-                    "name = VALUES(name), " +
-                    "contact_number = VALUES(contact_number), " +
-                    "employee_number = VALUES(employee_number), " +
-                    "role = VALUES(role)";
+    	String sql = "INSERT INTO users (id, name, contact_number, user_type, " +
+                "employee_number, role, password_hash) " +
+                "VALUES (?, ?, ?, 'EMPLOYEE', ?, ?, ?) " +
+                "ON DUPLICATE KEY UPDATE " +
+                "name = VALUES(name), " +
+                "contact_number = VALUES(contact_number), " +
+                "employee_number = VALUES(employee_number), " +
+                "role = VALUES(role), " +
+                "password_hash = VALUES(password_hash)";
         
         try (Connection conn = dbConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -147,6 +148,7 @@ public class DatabaseUserRepository implements UserRepository {
             pstmt.setString(3, employee.getContactNumber());
             pstmt.setString(4, employee.getEmployeeNumber());
             pstmt.setString(5, employee.getRole());
+            pstmt.setString(6, employee.getPasswordHash());
             
             pstmt.executeUpdate();
             
@@ -260,13 +262,15 @@ public class DatabaseUserRepository implements UserRepository {
             return customer;
             
         } else if ("EMPLOYEE".equals(userType)) {
-            return new Employee(
+            Employee emp = new Employee(
                 rs.getString("id"),
                 rs.getString("name"),
                 rs.getString("contact_number"),
                 rs.getString("employee_number"),
                 rs.getString("role")
             );
+            emp.setPassword(rs.getString("password_hash")); // ← add this
+            return emp;
         }
         
         throw new IllegalStateException("Unknown user type: " + userType);

@@ -56,7 +56,6 @@ public class UserServiceImpl implements UserService {
         if (email == null || email.trim().isEmpty()) {
             return new LoginResult(false, "Email is required", null);
         }
-
         if (password == null || password.trim().isEmpty()) {
             return new LoginResult(false, "Password is required", null);
         }
@@ -73,12 +72,62 @@ public class UserServiceImpl implements UserService {
             return new LoginResult(false, "Customer is not registered", null);
         }
 
-        // Verify the provided password against the stored BCrypt hash
         if (!BCrypt.checkpw(password, customer.getPasswordHash())) {
             return new LoginResult(false, "Invalid password", null);
         }
 
         return new LoginResult(true, "Login successful", customer);
+    }
+
+    @Override
+    public RegistrationResult registerEmployee(String name, String contact,
+                                                String employeeNumber, String role, String password) {
+        if (name == null || name.trim().isEmpty()) {
+            return new RegistrationResult(false, "Name is required", null);
+        }
+        if (employeeNumber == null || employeeNumber.trim().isEmpty()) {
+            return new RegistrationResult(false, "Employee number is required", null);
+        }
+        if (role == null || role.trim().isEmpty()) {
+            return new RegistrationResult(false, "Role is required", null);
+        }
+        if (password == null || password.length() < 8) {
+            return new RegistrationResult(false, "Password must be at least 8 characters", null);
+        }
+
+        Optional<Employee> existing = userRepository.findEmployeeByNumber(employeeNumber);
+        if (existing.isPresent()) {
+            return new RegistrationResult(false, "Employee number already exists", null);
+        }
+
+        String id = "EMP" + System.currentTimeMillis();
+        Employee employee = new Employee(id, name, contact, employeeNumber, role);
+        employee.setPassword(BCrypt.hashpw(password, BCrypt.gensalt())); // ← fixed
+        userRepository.save(employee);
+
+        return new RegistrationResult(true, "Employee registered successfully", null);
+    }
+
+    @Override
+    public EmployeeLoginResult loginEmployee(String employeeNumber, String password) {
+        if (employeeNumber == null || employeeNumber.trim().isEmpty()) {
+            return new EmployeeLoginResult(false, "Employee number is required", null);
+        }
+        if (password == null || password.trim().isEmpty()) {
+            return new EmployeeLoginResult(false, "Password is required", null);
+        }
+
+        Optional<Employee> employeeOpt = userRepository.findEmployeeByNumber(employeeNumber);
+        if (!employeeOpt.isPresent()) {
+            return new EmployeeLoginResult(false, "Employee not found", null);
+        }
+
+        Employee employee = employeeOpt.get();
+        if (!employee.verifyPassword(password)) { // verifyPassword now uses BCrypt — fix Employee.java too
+            return new EmployeeLoginResult(false, "Incorrect password", null);
+        }
+
+        return new EmployeeLoginResult(true, "Login successful", employee);
     }
 
     @Override

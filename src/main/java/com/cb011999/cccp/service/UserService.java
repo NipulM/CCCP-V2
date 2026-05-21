@@ -12,6 +12,11 @@ public interface UserService {
                                         String password, String address);
 
     LoginResult loginWithEmail(String email, String password);
+    
+    RegistrationResult registerEmployee(String name, String contact,
+            String employeeNumber, String role, String password);
+
+    EmployeeLoginResult loginEmployee(String employeeNumber, String password);
 
     List<OnlineCustomer> getAllCustomers();
 
@@ -49,5 +54,21 @@ public interface UserService {
         public boolean isSuccess() { return success; }
         public String getMessage() { return message; }
         public OnlineCustomer getCustomer() { return customer; }
+    }
+    
+    public static class EmployeeLoginResult {
+        private final boolean success;
+        private final String message;
+        private final Employee employee;
+
+        public EmployeeLoginResult(boolean success, String message, Employee employee) {
+            this.success = success;
+            this.message = message;
+            this.employee = employee;
+        }
+
+        public boolean isSuccess() { return success; }
+        public String getMessage() { return message; }
+        public Employee getEmployee() { return employee; }
     }
 }
