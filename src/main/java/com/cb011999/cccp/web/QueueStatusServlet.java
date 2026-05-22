@@ -13,8 +13,6 @@ import java.io.PrintWriter;
  * API endpoint that returns the current state of the request queue.
  * 
  * Used by the dashboard to display server load in real time.
- * Also useful during demonstrations to show the queue filling up
- * when test clients send rapid requests.
  */
 @WebServlet("/api/queue-status")
 public class QueueStatusServlet extends HttpServlet {

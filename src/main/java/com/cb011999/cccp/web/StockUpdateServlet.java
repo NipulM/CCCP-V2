@@ -20,11 +20,6 @@ import java.util.List;
  * every few seconds (polling). If stock has changed (because another
  * user made a purchase), the page updates automatically without
  * a full reload.
- * 
- * This is how real-time updates work between clients:
- * 1. Employee A sells 5 milk on the POS page
- * 2. Employee B's POS page polls this endpoint 2 seconds later
- * 3. Employee B sees the updated stock count without refreshing
  */
 @WebServlet("/api/stock")
 public class StockUpdateServlet extends HttpServlet {

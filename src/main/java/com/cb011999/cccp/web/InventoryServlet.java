@@ -21,11 +21,11 @@ public class InventoryServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-//        HttpSession session = request.getSession(false);
-//        if (session == null || !"employee".equals(session.getAttribute("userType"))) {
-//            response.sendRedirect("login");
-//            return;
-//        }
+        HttpSession session = request.getSession(false);
+        if (session == null || !"employee".equals(session.getAttribute("userType"))) {
+            response.sendRedirect("login");
+            return;
+        }
 
         InventoryRepository inventoryRepo = (InventoryRepository) getServletContext().getAttribute("inventoryRepo");
 

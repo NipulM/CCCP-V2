@@ -22,11 +22,11 @@ public class StockServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-//        HttpSession session = request.getSession(false);
-//        if (session == null || !"employee".equals(session.getAttribute("userType"))) {
-//            response.sendRedirect("login");
-//            return;
-//        }
+        HttpSession session = request.getSession(false);
+        if (session == null || !"employee".equals(session.getAttribute("userType"))) {
+            response.sendRedirect("login");
+            return;
+        }
 
         ItemRepository itemRepo = (ItemRepository) getServletContext().getAttribute("itemRepo");
         List<Item> allItems = itemRepo.findAll();

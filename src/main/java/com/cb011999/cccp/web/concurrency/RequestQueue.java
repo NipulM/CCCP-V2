@@ -54,9 +54,6 @@ public class RequestQueue {
                     + "Queue size: " + queueSize + " | "
                     + "Thread: " + Thread.currentThread().getName());
 
-            // Wait until the worker thread has processed this task
-            // synchronized + wait/notify is the basic Java mechanism
-            // for one thread to wait for another thread to finish something
             synchronized (task) {
                 while (!task.isCompleted()) {
                     task.wait();
@@ -70,16 +67,6 @@ public class RequestQueue {
 
     /**
      * The worker thread runs this method continuously.
-     *
-     * taskQueue.take() BLOCKS if the queue is empty — the thread just
-     * sleeps until a new task arrives. This is efficient because the
-     * thread isn't using CPU while waiting.
-     *
-     * When a task arrives, the worker processes it and notifies the
-     * waiting servlet thread that the result is ready.
-     *
-     * After each task, logs the outcome (OK or ERROR) and current
-     * queue depth so you can spot backlogs or failures at a glance.
      */
     private void processQueue() {
         while (running) {
@@ -98,7 +85,6 @@ public class RequestQueue {
                     task.setError(e.getMessage());
                 }
 
-                // Increment the processed counter and capture its value
                 int processed;
                 synchronized (counterLock) {
                     totalProcessed++;
@@ -106,11 +92,11 @@ public class RequestQueue {
                 }
 
                 String status = task.hasError() ? "ERROR" : "OK";
+                // Logging to debug if i get any errors
                 System.out.println("[RequestQueue] Task #" + processed + " processed [" + status + "] | "
                         + "Remaining in queue: " + remaining + " | "
                         + "Total processed: " + processed + "/" + totalSubmitted);
 
-                // Notify the servlet thread that this task is done
                 synchronized (task) {
                     task.setCompleted(true);
                     task.notifyAll();
@@ -140,21 +126,12 @@ public class RequestQueue {
         }
     }
 
-    /**
-     * Returns the total number of tasks successfully dequeued and executed
-     * (regardless of whether the task itself threw an error).
-     * Safe to call from any thread.
-     */
     public int getTotalProcessed() {
         synchronized (counterLock) {
             return totalProcessed;
         }
     }
 
-    /**
-     * Shut down the worker thread gracefully.
-     * Logs final submitted/processed counts so you can confirm no tasks were lost.
-     */
     public void shutdown() {
         running = false;
         workerThread.interrupt();

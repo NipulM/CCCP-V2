@@ -32,9 +32,6 @@ public class ReportServlet extends HttpServlet {
         String reportType = request.getParameter("type");
         if (reportType == null) reportType = "daily";
 
-        // Parse optional filters from the request
-        // These let the employee filter reports by transaction type and store type
-        // which fulfils the "combinedly and severally" requirement from the brief
         TransactionType transactionType = null;
         String txFilter = request.getParameter("transactionType");
         if (txFilter != null && !txFilter.isEmpty()) {

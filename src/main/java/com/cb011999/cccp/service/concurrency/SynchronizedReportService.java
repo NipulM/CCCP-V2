@@ -10,10 +10,6 @@ import java.time.LocalDate;
 
 /**
  * Thread-safe wrapper for ReportService.
- * 
- * Reports are read-only operations so they don't go through the queue.
- * We only synchronize to get consistent reads — preventing a report
- * from reading stock data mid-update by another thread.
  */
 public class SynchronizedReportService implements ReportService {
 
