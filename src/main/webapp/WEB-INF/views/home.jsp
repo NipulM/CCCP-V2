@@ -12,7 +12,7 @@
         .navbar-links { display: flex; align-items: center; gap: 15px; }
         .navbar a { color: white; text-decoration: none; padding: 8px 16px; border-radius: 4px; }
         .navbar a:hover { background: rgba(255,255,255,0.2); }
-        .btn-login { background: white; color: #2e7d32; font-weight: bold; }
+        .btn-login { background: #2e7d32; color: #2e7d32; font-weight: bold; }
         .btn-login:hover { background: #e8f5e9; }
         .btn-staff { font-size: 12px; opacity: 0.8; }
         .hero { background: #2e7d32; color: white; text-align: center; padding: 40px 20px 50px; }
@@ -33,7 +33,6 @@
         .login-prompt h3 { margin-bottom: 10px; color: #333; }
         .login-prompt p { color: #666; margin-bottom: 15px; }
         .login-prompt a { display: inline-block; padding: 12px 30px; background: #2e7d32; color: white; text-decoration: none; border-radius: 4px; font-size: 16px; }
-        .login-prompt a:hover { background: #1b5e20; }
         footer { background: #333; color: #aaa; text-align: center; padding: 20px; margin-top: 40px; font-size: 13px; }
     </style>
 </head>
@@ -53,7 +52,6 @@
                 <a href="logout">Logout</a>
             <% } else { %>
                 <a href="login" class="btn-login">Login / Register</a>
-                <a href="staff" class="btn-staff">Staff</a>
             <% } %>
         </div>
     </div>
@@ -107,7 +105,7 @@
     </div>
 
     <footer>
-        &copy; 2026 SYOS - Synex Outlet Store, Colombo
+        2026 SYOS - Synex Outlet Store, Colombo
     </footer>
 </body>
 </html>

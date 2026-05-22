@@ -16,18 +16,7 @@ import java.util.List;
  * Thread-safe implementation of InventoryService.
  * 
  * Wraps InventoryServiceImpl and routes all write operations through
- * the SYOSRequestQueue. This ensures that when multiple users (e.g.,
- * two cashiers, or one cashier and one online customer) modify stock
- * at the same time, their operations are queued and processed one
- * at a time — preventing race conditions.
- * 
- * Read operations use synchronized blocks for consistent reads but
- * don't go through the queue (they don't modify data, so they're safe
- * to run alongside the worker thread as long as reads are atomic).
- * 
- * This class implements the same InventoryService interface as the Impl,
- * so servlets don't know or care which version they're using.
- * That's the power of programming to an interface.
+ * the SYOSRequestQueue.
  */
 public class SynchronizedInventoryService implements InventoryService {
 

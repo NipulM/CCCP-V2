@@ -48,7 +48,6 @@
             %>
             <span>Hello, <%= customer.getName() %></span>
             <a href="orders">My Orders</a>
-            <a href="dashboard">Dashboard</a>
             <a href="logout">Logout</a>
         </div>
     </div>

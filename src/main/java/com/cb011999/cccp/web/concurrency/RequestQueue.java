@@ -9,52 +9,27 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Uses the Producer-Consumer pattern:
  * - Servlet threads are PRODUCERS — they put tasks into the queue
  * - The worker thread is the CONSUMER — it takes tasks out and processes them
- *
- * A single worker Thread processes tasks one at a time from a BlockingQueue.
- * BlockingQueue is thread-safe, so multiple servlets can add tasks simultaneously
- * without causing data corruption.
- *
- * This ensures that critical operations like checkout and stock reduction
- * happen one at a time, preventing race conditions.
  */
 public class RequestQueue {
-
-    // The queue holds tasks waiting to be processed
-    // LinkedBlockingQueue is thread-safe — multiple threads can put/take safely
     private final BlockingQueue<Task> taskQueue;
-
-    // Single worker thread that processes tasks from the queue
     private final Thread workerThread;
-
-    // Flag to control the worker thread's lifecycle
     private volatile boolean running = true;
 
     private static RequestQueue instance;
 
-    // Counters for monitoring how many tasks have been submitted and processed
     private int totalSubmitted = 0;
     private int totalProcessed = 0;
 
-    // Lock object to safely update counters from multiple threads
     private final Object counterLock = new Object();
 
     private RequestQueue() {
         this.taskQueue = new LinkedBlockingQueue<>();
-
-        // Create and start the worker thread
-        // This thread runs continuously, waiting for tasks in the queue
         this.workerThread = new Thread(this::processQueue, "SYOS-Worker");
         this.workerThread.setDaemon(true);
         this.workerThread.start();
 
         System.out.println("[RequestQueue] Started with worker thread.");
     }
-
-    /**
-     * Singleton — one queue for the entire application.
-     * synchronized ensures only one instance is created even if multiple
-     * servlet threads call this at the same time.
-     */
     public static synchronized RequestQueue getInstance() {
         if (instance == null) {
             instance = new RequestQueue();
@@ -62,30 +37,16 @@ public class RequestQueue {
         return instance;
     }
 
-    /**
-     * Submit a task to the queue.
-     *
-     * The calling servlet thread puts the task in the queue, then waits
-     * on the task object until the worker thread has finished processing it.
-     *
-     * Also increments the submission counter and logs diagnostic info
-     * so you can monitor queue depth and throughput in the server logs.
-     *
-     * @param task The work to be done
-     */
     public void submitTask(Task task) {
         try {
             int submitted;
             int queueSize;
 
-            // Increment the submission counter under a lock so concurrent
-            // servlet threads don't overwrite each other's counts
             synchronized (counterLock) {
                 totalSubmitted++;
                 submitted = totalSubmitted;
             }
 
-            // Put the task into the queue — thread-safe operation
             taskQueue.put(task);
             queueSize = taskQueue.size();
 

@@ -25,15 +25,10 @@ public class Task {
         this.error = null;
     }
 
-    /**
-     * Called by the worker thread to execute this task.
-     */
+
     public void execute() {
         work.run();
     }
-
-    // Result management — the servlet sets the result holder before submitting,
-    // the work Runnable populates it, and the servlet reads it after completion.
 
     public Object getResult() {
         return result;

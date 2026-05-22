@@ -47,10 +47,10 @@
         <%-- Report type tabs --%>
         <div class="tabs">
             <a href="reports?type=daily" class="<%= "daily".equals(reportType) ? "active" : "" %>">Daily Sales</a>
+            <a href="reports?type=bill" class="<%= "bill".equals(reportType) ? "active" : "" %>">Bill Report</a>
             <a href="reports?type=reshelf" class="<%= "reshelf".equals(reportType) ? "active" : "" %>">Reshelf</a>
             <a href="reports?type=reorder" class="<%= "reorder".equals(reportType) ? "active" : "" %>">Reorder</a>
             <a href="reports?type=stock" class="<%= "stock".equals(reportType) ? "active" : "" %>">Stock</a>
-            <a href="reports?type=bill" class="<%= "bill".equals(reportType) ? "active" : "" %>">Bill Report</a>
         </div>
 
         <%-- Filters — allows filtering by transaction type and store type --%>
@@ -96,6 +96,35 @@
             </table>
             <div class="summary">
                 <p><strong>Total Revenue: Rs. <%= String.format("%.2f", dailyReport.getTotalRevenue()) %></strong></p>
+            </div>
+        <% } } %>
+        
+        <%-- BILL REPORT --%>
+        <% if ("bill".equals(reportType)) {
+            BillReport billReport = (BillReport) request.getAttribute("billReport");
+            if (billReport != null) {
+        %>
+            <h3>Bill Report</h3>
+            <table>
+                <tr>
+                    <th>Serial #</th><th>Date</th><th>Amount</th>
+                    <th>Discount</th><th>Final</th><th>Type</th><th>Store</th>
+                </tr>
+                <% for (BillReport.BillSummary bill : billReport.getBills()) { %>
+                <tr>
+                    <td><%= bill.getSerialNumber() %></td>
+                    <td><%= bill.getBillDate().toString().substring(0, 16) %></td>
+                    <td>Rs. <%= String.format("%.2f", bill.getTotalAmount()) %></td>
+                    <td>Rs. <%= String.format("%.2f", bill.getDiscount()) %></td>
+                    <td>Rs. <%= String.format("%.2f", bill.getFinalAmount()) %></td>
+                    <td><%= bill.getTransactionType().getDisplayName() %></td>
+                    <td><%= bill.getStoreType().getDisplayName() %></td>
+                </tr>
+                <% } %>
+            </table>
+            <div class="summary">
+                <p>Total Bills: <%= billReport.getTotalBills() %></p>
+                <p><strong>Total Revenue: Rs. <%= String.format("%.2f", billReport.getTotalRevenue()) %></strong></p>
             </div>
         <% } } %>
 
@@ -165,35 +194,6 @@
             <div class="summary">
                 <p>Total Batches: <%= stockReport.getTotalBatches() %></p>
                 <p>Total Quantity: <%= stockReport.getTotalQuantity() %></p>
-            </div>
-        <% } } %>
-
-        <%-- BILL REPORT --%>
-        <% if ("bill".equals(reportType)) {
-            BillReport billReport = (BillReport) request.getAttribute("billReport");
-            if (billReport != null) {
-        %>
-            <h3>Bill Report</h3>
-            <table>
-                <tr>
-                    <th>Serial #</th><th>Date</th><th>Amount</th>
-                    <th>Discount</th><th>Final</th><th>Type</th><th>Store</th>
-                </tr>
-                <% for (BillReport.BillSummary bill : billReport.getBills()) { %>
-                <tr>
-                    <td><%= bill.getSerialNumber() %></td>
-                    <td><%= bill.getBillDate().toString().substring(0, 16) %></td>
-                    <td>Rs. <%= String.format("%.2f", bill.getTotalAmount()) %></td>
-                    <td>Rs. <%= String.format("%.2f", bill.getDiscount()) %></td>
-                    <td>Rs. <%= String.format("%.2f", bill.getFinalAmount()) %></td>
-                    <td><%= bill.getTransactionType().getDisplayName() %></td>
-                    <td><%= bill.getStoreType().getDisplayName() %></td>
-                </tr>
-                <% } %>
-            </table>
-            <div class="summary">
-                <p>Total Bills: <%= billReport.getTotalBills() %></p>
-                <p><strong>Total Revenue: Rs. <%= String.format("%.2f", billReport.getTotalRevenue()) %></strong></p>
             </div>
         <% } } %>
 
