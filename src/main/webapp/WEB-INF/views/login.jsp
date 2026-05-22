@@ -23,7 +23,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>SYOS</h1>
+        <h1>Synex Outlet Store</h1>
         <h3>Customer Login</h3>
 
         <% if (request.getAttribute("error") != null) { %>

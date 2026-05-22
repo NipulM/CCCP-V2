@@ -25,7 +25,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h2>SYOS - Inventory</h2>
+        <h2>Inventory</h2>
         <div>
             <a href="dashboard">Dashboard</a>
             <a href="logout">Logout</a>

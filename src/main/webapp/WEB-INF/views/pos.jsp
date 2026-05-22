@@ -36,7 +36,7 @@
 </head>
 <body>
     <div class="navbar">
-        <h2>SYOS - Point of Sale</h2>
+        <h2>Point of Sale</h2>
         <div>
             <a href="dashboard">Dashboard</a>
             <a href="logout">Logout</a>

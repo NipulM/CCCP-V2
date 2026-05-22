@@ -23,7 +23,7 @@
 </head>
 <body>
     <div class="login-container">
-        <h1>SYOS</h1>
+        <h1>Synex Outlet Store</h1>
         <div class="staff-badge"><span>STAFF PORTAL</span></div>
         <h3>Employee Login</h3>
 
