@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
         String id = generateCustomerId();
         OnlineCustomer customer = new OnlineCustomer(id, name, contact, email);
-        customer.register(password, address);
+        customer.register(BCrypt.hashpw(password, BCrypt.gensalt()), address);
         userRepository.save(customer);
 
         return new RegistrationResult(true, "Registration successful", customer);
